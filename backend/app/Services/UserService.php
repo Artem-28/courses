@@ -10,7 +10,8 @@ class UserService
     {
         $user = new User([
             'email' => $data['email'],
-            'password' => bcrypt($data['password'])
+            'password' => bcrypt($data['password']),
+            'email_verified_at' =>$data['email_verified_at'],
         ]);
         $user->save();
 
