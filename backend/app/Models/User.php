@@ -16,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $phone
  * @property string $email_verified_at
  * @property string $phone_verified_at
+ * @property array $permissions
  *  */
 
 class User extends Authenticatable
@@ -53,6 +54,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'permissions'
+    ];
+
+    protected $with = [
+        'account',
+        'profile'
+    ];
+
     public function account(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Account::class);
@@ -61,5 +71,20 @@ class User extends Authenticatable
     public function profile(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_users', 'user_id', 'role', 'id', 'slug');
+    }
+
+    public function roleSlugs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RoleUser::class);
+    }
+
+    public function getPermissionsAttribute()
+    {
+        return $this->roleSlugs->pluck('role')->toArray();
     }
 }

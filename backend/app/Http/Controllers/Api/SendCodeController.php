@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\EmailMessage;
+use App\Models\ConfirmationCode;
 use App\Services\ConfirmationCodeService;
 use App\Services\SendEmailService;
 use Illuminate\Http\Request;
@@ -26,8 +28,11 @@ class SendCodeController extends Controller
     {
         try {
             $email = $request->get('email');
-            $code = $this->confirmationCodeService->createCode('email_code', $email);
-            $this->sendEmailService->sendConfirmMessage($email, $code);
+            $confirmType = $request->get('type');
+
+            $code = $this->confirmationCodeService->createCode(ConfirmationCode::EMAIL_CODE, $confirmType, $email);
+
+            $this->sendEmailService->sendConfirmMessage($confirmType, $email, $code);
 
             return response()->json([
                 'success' => true,

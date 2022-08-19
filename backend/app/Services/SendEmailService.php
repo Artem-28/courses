@@ -2,30 +2,32 @@
 
 namespace App\Services;
 
+use App\Mail\EmailMessage;
+use App\Models\ConfirmationCode;
 use Illuminate\Support\Facades\Mail;
 
 class SendEmailService
 {
-    private string $fromEmail;
-    private string $appName;
 
-    public function __construct()
+    public function sendConfirmMessage(string $type, string $toEmail, string $code)
     {
-        $this->fromEmail = env('MAIL_USERNAME');
-        $this->appName = env('APP_NAME');
+        switch ($type) {
+            case ConfirmationCode::REGISTRATION_TYPE:
+                $this->sendConfirmRegistrationMessage($toEmail, $code);
+                break;
+        }
     }
 
-
-    public function sendConfirmMessage(string $toEmail, string $code)
+    public function sendConfirmRegistrationMessage(string $toEmail, string $code)
     {
-        $toName = '';
-        $data = array('code' => $code);
-        Mail::send('emails.confirm', $data, function ($message) use ($toName, $toEmail) {
+        $data = array('code'=> $code);
 
-            $message->to($toEmail, $toName)
-                ->subject('Подтверждение действия на ' . $this->appName);
+        $message = new EmailMessage($data);
 
-            $message->from( $this->fromEmail,  $this->appName);
-        });
+        $message->to($toEmail)
+            ->subject('Подтверждение регистрации')
+            ->view('emails.confirm')
+            ->send();
     }
+
 }

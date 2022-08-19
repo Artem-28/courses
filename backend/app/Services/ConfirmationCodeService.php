@@ -26,13 +26,16 @@ class ConfirmationCodeService
         return join('', $random);
     }
 
-    private function saveEmailCode($email): string
+    private function saveEmailCode($confirmType, $email): string
     {
-        $code = ['code' => $this->generateCode(6)];
+        $data = array(
+            'code' => $this->generateCode(6),
+            'type' => $confirmType
+        );
 
         $confirmCode = ConfirmationCode::updateOrCreate([
-            'email' => $email
-        ], $code);
+            'email' => $email,
+        ], $data);
 
         return $confirmCode->code;
     }
@@ -51,14 +54,18 @@ class ConfirmationCodeService
         return  $updatedTimestamp + $this->liveTimeCode > $nowTimestamp;
     }
 
-    private function getEmailCode($email): ConfirmationCode
+    private function getEmailCode($email, $confirmType)
     {
-        return ConfirmationCode::where('email', $email)->first();
+        return ConfirmationCode::where(['email' => $email, 'type' => $confirmType])->first();
     }
 
-    private function checkEmailCode(string $email, string $confirmCode): array
+    private function checkEmailCode(string $confirmType, string $email, string $confirmCode): array
     {
-        $dataCode = $this->getEmailCode($email);
+        $dataCode = $this->getEmailCode($email, $confirmType);
+
+        if (!$dataCode) {
+            throw new \Exception('код подтверждения не найден', 404);
+        }
         $live = $this->checkIsLiveCode($dataCode);
         $matches =  $dataCode->code === $confirmCode;
 
@@ -70,21 +77,27 @@ class ConfirmationCodeService
         return array('live' => false, 'matches' => false);
     }
 
-    public function createCode($type, $address)
+    public function createCode(string $type, string $confirmType, string $address)
     {
         switch ($type) {
             case ConfirmationCode::EMAIL_CODE:
-                return $this->saveEmailCode($address);
+                return $this->saveEmailCode($confirmType, $address);
             case ConfirmationCode::PHONE_CODE:
                 return $this->savePhoneCode($address);
         }
     }
 
-    public function checkCode(string $type, $address, string $confirmCode = '')
+    public function checkCode
+    (
+        string $type,
+        string $confirmType,
+        string $address,
+        string $confirmCode
+    )
     {
         switch ($type) {
             case ConfirmationCode::EMAIL_CODE:
-                return $this->checkEmailCode($address, $confirmCode);
+                return $this->checkEmailCode($confirmType, $address, $confirmCode);
             case ConfirmationCode::PHONE_CODE:
                 return $this->checkPhoneCode($address, $confirmCode);
         }
