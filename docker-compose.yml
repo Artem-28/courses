@@ -8,7 +8,7 @@ services:
 
   nginx:
     image: nginx:stable-alpine
-    container_name: nginx
+    container_name: courses_nginx
     ports:
       - "${NGINX_PORT}:80"
     volumes:
@@ -17,8 +17,8 @@ services:
       TZ: ${WORKSPACE_TIMEZONE}
   mysql-8:
     image: mysql:8.0.21
+    container_name: courses_mysql-8
     command: --default-authentication-plugin=mysql_native_password --skip_name_resolve
-    container_name: mysql-8
     restart: unless-stopped
     volumes:
       - ./mysql-8/data:/var/lib/mysql
@@ -35,7 +35,7 @@ services:
       TZ: ${WORKSPACE_TIMEZONE}
 
   php-7.4:
-    container_name: backend
+    container_name: courses_backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -55,7 +55,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: courses_pma
     links:
       - mysql-8
     environment:
@@ -69,7 +69,7 @@ services:
 
   
   frontend:
-    container_name: frontend
+    container_name: courses_frontend
     build: 
       context: ./frontend
       dockerfile: Dockerfile
