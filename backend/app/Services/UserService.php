@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserService
 {
@@ -22,4 +23,10 @@ class UserService
     {
         return User::where('email', $email)->first();
     }
+
+    public function getUserByIds(...$ids): Collection
+    {
+        return User::find($ids);
+    }
+
 }

@@ -87,4 +87,9 @@ class User extends Authenticatable
     {
         return $this->roleSlugs->pluck('role')->toArray();
     }
+
+    public function hasPermission(string $role): bool
+    {
+        return in_array($role, $this->permissions);
+    }
 }

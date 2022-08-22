@@ -20,4 +20,22 @@ class Account extends Model
         'title',
         'description',
     ];
+
+    public function attachments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
+    public function subscribers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'subscribers');
+    }
+
+    public function listedAsTeacher(int $id): bool
+    {
+        return $this->subscribers()
+            ->where('role', Role::TEACHER)
+            ->where('user_id', $id)
+            ->exists();
+    }
 }
