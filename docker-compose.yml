@@ -51,6 +51,7 @@ services:
       - ./php-ini/8.1/php.ini:/usr/local/etc/php/php.ini
     ports:
       - "${PHP_7_4_PORT}:9000"
+      - "${MAIL_MAILER}:465"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
