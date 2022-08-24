@@ -26,16 +26,9 @@ class Account extends Model
         return $this->hasMany(Attachment::class);
     }
 
-    public function subscribers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    // Учителя добавленные к аккаунту
+    public function teachers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'subscribers');
-    }
-
-    public function listedAsTeacher(int $id): bool
-    {
-        return $this->subscribers()
-            ->where('role', Role::TEACHER)
-            ->where('user_id', $id)
-            ->exists();
+        return $this->belongsToMany(User::class, 'teachers');
     }
 }

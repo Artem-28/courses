@@ -68,6 +68,12 @@ class User extends Authenticatable
         return $this->hasOne(Account::class);
     }
 
+    // Аккаунты в которых пользователь является учителем
+    public function teacherAccounts(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Account::class, 'teachers');
+    }
+
     public function profile(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Profile::class);
