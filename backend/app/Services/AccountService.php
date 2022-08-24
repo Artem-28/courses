@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Account;
+use App\Models\Role;
 use App\Models\User;
 
 class AccountService

@@ -4,76 +4,68 @@ namespace App\Services;
 
 use App\Models\Account;
 use App\Models\Role;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 
 class SubscriberService
 {
-    // Проверяет, может ли быть пользователь быть подписчиком
-    private function validateSubscriber($subscriber, $user): bool
+    const STATUS_USER_CONFIRMATION = 'userConfirmation';
+    const STATUS_ACCEPT = 'accept';
+
+    // Добавление учителей к аккаунту
+    public function addTeacherToAccount(Account $account, Collection $users): \Illuminate\Support\Collection
     {
-        if (!$user) return false;
-        return $user->hasPermission($subscriber['role']);
-    }
-
-    // Возвращает массив id с учетом валидации ролей
-    public function getAvailableIdsFromData(array $dataSubscribers): array
-    {
-        $subscriberIds = array();
-
-        foreach ($dataSubscribers as $subscriber) {
-
-            switch ($subscriber['role']) {
-                case Role::STUDENT:
-                case Role::TEACHER:
-                    array_push($subscriberIds, $subscriber['id']);
-            }
-        }
-        return $subscriberIds;
-    }
-
-    public function addSubscribersToAccount
-    (
-        array $dataSubscribers,
-        Account $account,
-        Collection $users
-
-    ): array
-    {
-        $students = collect();
         $teachers = collect();
-
-        foreach ($dataSubscribers as $data) {
-            $user = $users->firstWhere('id', $data['id']);
-
-            if (!$this->validateSubscriber($data, $user)) {
-                continue;
-            };
+        foreach ($users as $user) {
 
             try {
-                $account->subscribers()->attach(
+                $account->teachers()->attach(
                     $user->id,
                     [
-                        'status' => 'userConfirmation',
-                        'role' => $data['role']
+                        'status' => SubscriberService::STATUS_USER_CONFIRMATION,
+                        'created_at' => Carbon::now()->format('Y-m-d H:i:s')
                     ]
                 );
-
-                switch ($data['role']) {
-                    case Role::TEACHER:
-                        $teachers->push($user);
-                        break;
-                    case Role::STUDENT:
-                        $students->push($user);
-                }
+                $teachers->push($user);
             } catch (QueryException $exception) {
                 continue;
             }
         }
+        return $teachers;
+    }
 
-        return [
-            'students' => $students,
-            'teachers' => $teachers
-        ];
+    public function removeTeachersFromAccount(Account $account, $teacherId)
+    {
+
+    }
+
+    // Подтверждение приглашения
+    public function confirmInvite($user, $fromAccountId): array
+    {
+        $arrayAccountIds = $fromAccountId;
+
+        if (!is_array($fromAccountId)) {
+            $arrayAccountIds = array($fromAccountId);
+        }
+
+        $confirmedAccountIds = array();
+
+        foreach ($arrayAccountIds as $accountId) {
+            try {
+                $user->teacherAccounts()->updateExistingPivot(
+                        $accountId,
+                        [
+                            'status' => SubscriberService::STATUS_ACCEPT,
+                            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+                        ]
+                );
+                array_push($confirmedAccountIds, $accountId);
+            } catch (QueryException $exception) {
+                continue;
+            }
+        }
+        return $confirmedAccountIds;
     }
 }

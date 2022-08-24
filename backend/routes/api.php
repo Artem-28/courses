@@ -22,6 +22,8 @@ Route::post('auth/registration', [\App\Http\Controllers\Api\AuthController::clas
 Route::post('auth/login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('sendCode', [\App\Http\Controllers\Api\SendCodeController::class, 'sendCode']);
 
-Route::post('subscriber/add-subscriber', [\App\Http\Controllers\Api\SubscriberController::class, 'addSubscriber']);
+Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherController::class, 'addToAccount']);
+Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);
+Route::delete('teacher/remove-from-account', [\App\Http\Controllers\Api\TeacherController::class, 'removeFromAccount']);
 
 Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::class);

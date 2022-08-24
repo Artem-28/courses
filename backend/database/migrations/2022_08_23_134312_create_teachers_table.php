@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSubscribersTable extends Migration
+class CreateTeachersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,25 +13,23 @@ class CreateSubscribersTable extends Migration
      */
     public function up()
     {
-        Schema::create('subscribers', function (Blueprint $table) {
+        Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('account_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('course_id')->nullable();
-            $table->string('role');
+            $table->unsignedBigInteger('account_id');
             $table->string('status');
             $table->timestamps();
-
-            $table->foreign('account_id')
-                ->references('id')
-                ->on('accounts')
-                ->onDelete('cascade');
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
-            $table->unique(['account_id', 'user_id', 'role']);
+
+            $table->foreign('account_id')
+                ->references('id')
+                ->on('accounts')
+                ->onDelete('cascade');
+            $table->unique(['user_id', 'account_id']);
         });
     }
 
@@ -42,6 +40,6 @@ class CreateSubscribersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscribers');
+        Schema::dropIfExists('teachers');
     }
 }
