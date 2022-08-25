@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CourseController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,3 +30,11 @@ Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherControll
 Route::delete('teacher/remove-from-account', [\App\Http\Controllers\Api\TeacherController::class, 'removeFromAccount']);
 
 Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::class);
+
+//категории
+Route::get('/get-categories', [CategoryController::class, 'index']);
+
+//курсы
+Route::get('/courses', [CourseController::class, 'index']);
+Route::get('/courses/{id}', [CourseController::class, 'edit']);
+Route::post('/courses/{id}', [CourseController::class, 'update']);
