@@ -44,7 +44,6 @@ class AuthController extends Controller
 
     public function registration(Request $request): \Illuminate\Http\JsonResponse
     {
-
         try {
             $accountData = $request->input('account', []);
             $profileData = $request->input('profile', []);
@@ -61,19 +60,11 @@ class AuthController extends Controller
             );
 
             if (!$checkCode['live']) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Срок действия кода подтверждения истек'
-                ], 404);
+                return $this->errorResponse('Срок действия кода подтверждения истек', 404);
             }
 
             if (!$checkCode['matches']) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Код подтверждения введен не верно'
-                ], 404);
+                return $this->errorResponse('Код подтверждения введен не верно', 404);
             }
 
             $userData['email_verified_at'] = Carbon::now()->format('Y-m-d H:i:s');
@@ -85,18 +76,11 @@ class AuthController extends Controller
                 $this->accountService->create($accountData, $user);
                 $this->profileService->create($profileData, $user);
             });
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Регистрация завершена'
-            ]);
+            return $this->successResponse(null, 'Регистрация завершена');
 
         } catch (\Exception $exception) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage()
-            ], 500);
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
         }
 
     }
@@ -107,20 +91,17 @@ class AuthController extends Controller
         $user = $this->userService->getUserByEmail($data['email']);
 
         if (!$user || ! Auth::attempt($data)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Неверный логин или пароль'
-            ], 401);
+            return $this->errorResponse('Неверный логин или пароль', 401);
         }
 
         $token = $user->createToken('auth_token', $user->permissions)->plainTextToken;
         $resource = new Item($user, new UserTransformer());
 
-        return response()->json([
-            'success' => true,
+        $data = array(
             'access_token' => $token,
             'token_type' => 'bearer',
             'user' => $this->createData($resource)
-        ]);
+        );
+        return $this->successResponse($data);
     }
 }
