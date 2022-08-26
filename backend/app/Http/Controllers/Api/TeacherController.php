@@ -40,11 +40,7 @@ class TeacherController extends Controller
         $response = Gate::inspect('addTeacherToAccount', $account);
 
         if (!$response->allowed()) {
-
-            return response()->json([
-                'success' => false,
-                'message' => $response->message()
-            ], $response->code());
+            return $this->errorResponse($response->message(), $response->code());
         }
 
         try {
@@ -52,16 +48,12 @@ class TeacherController extends Controller
             $teachers = $this->subscriberService->addTeacherToAccount($account, $users);
 
             $resource = new Collection($teachers, new UserTransformer());
+            $data = $this->createData($resource);
+            return $this->successResponse($data);
 
-            return response()->json([
-                'success' => true,
-                'teachers' => $this->createData($resource)
-            ]);
         } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage()
-            ], 500);
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
         }
     }
 
@@ -73,15 +65,11 @@ class TeacherController extends Controller
             $user = auth()->user();
             $confirmedAccountIds = $this->subscriberService->confirmInvite($user, $fromAccountId);
 
-            return response()->json([
-                'success' => true,
-                'confirmedAccountIds' => $confirmedAccountIds
-            ]);
+            return $this->successResponse($confirmedAccountIds);
+
         } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => $exception->getMessage()
-            ], 500);
+            $message = $exception->getMessage();
+            return $this->errorResponse($message);
         }
     }
 
