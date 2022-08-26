@@ -26,4 +26,10 @@ Route::post('teacher/add-to-account', [\App\Http\Controllers\Api\TeacherControll
 Route::patch('teacher/accept-invite', [\App\Http\Controllers\Api\TeacherController::class, 'acceptInvite']);
 Route::delete('teacher/remove-from-account', [\App\Http\Controllers\Api\TeacherController::class, 'removeFromAccount']);
 
+Route::post('dialog-group', [\App\Http\Controllers\Api\DialogGroupController::class, 'createGroup']);
+Route::post('dialog-group/{group}/add-user', [\App\Http\Controllers\Api\DialogGroupController::class, 'addUser']);
+Route::post('dialog-group/{group}/add-admin', [\App\Http\Controllers\Api\DialogGroupController::class, 'addAdmin']);
+Route::delete('dialog-group/{group}/remove-admin', [\App\Http\Controllers\Api\DialogGroupController::class, 'removeAdmin']);
+Route::delete('dialog-group/{group}/remove-user', [\App\Http\Controllers\Api\DialogGroupController::class, 'removeUser']);
+
 Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::class);

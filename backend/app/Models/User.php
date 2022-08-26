@@ -74,6 +74,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Account::class, 'teachers');
     }
 
+    public function adminDialogGroups(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(DialogGroup::class, 'admin_dialog_groups');
+    }
+
     public function profile(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Profile::class);
