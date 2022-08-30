@@ -5,18 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Services\CourseService;
+use App\Services\LessonService;
 
-class CourseController extends Controller
+class LessonController extends Controller
 {
-  public CourseService $courseService;
+  public LessonService $lessonService;
 
   public function __construct(
-    CourseService $courseService,
+    LessonService $lessonService,
   ) {
-    // $this->middleware(['auth:sanctum']);
-    $this->courseService = $courseService;
+    $this->middleware(['auth:sanctum']);
+    $this->lessonService = $lessonService;
   }
+
 
   /**
    * Display a listing of the resource.
@@ -25,8 +26,8 @@ class CourseController extends Controller
    */
   public function index()
   {
-    $courses = $this->courseService->getList();
-    return $this->successResponse($courses);
+    $lessons = $this->lessonService->getList();
+    return $this->successResponse($lessons);
   }
 
   /**
@@ -48,8 +49,8 @@ class CourseController extends Controller
   public function store(Request $request)
   {
     try {
-      $course = $this->courseService->addNew($request);
-      return $this->successResponse($course);
+      $lesson = $this->lessonService->addNew($request);
+      return $this->successResponse($lesson);
     } catch (\Exception $exception) {
       $message = $exception->getMessage();
       return $this->errorResponse($message);
@@ -64,6 +65,7 @@ class CourseController extends Controller
    */
   public function show($id)
   {
+    //
   }
 
   /**
@@ -74,8 +76,8 @@ class CourseController extends Controller
    */
   public function edit($id)
   {
-    $course = $this->courseService->getById($id);
-    return $this->successResponse($course);
+    $lesson = $this->lessonService->getById($id);
+    return $this->successResponse($lesson);
   }
 
   /**
@@ -88,9 +90,9 @@ class CourseController extends Controller
   public function update(Request $request, $id)
   {
     try {
-      $course = $this->courseService->updateById($id, $request);
+      $lesson = $this->lessonService->updateById($id, $request);
 
-      return $this->successResponse($course);
+      return $this->successResponse($lesson);
     } catch (\Exception $exception) {
       $message = $exception->getMessage();
       return $this->errorResponse($message);

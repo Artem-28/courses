@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\LessonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,5 +37,12 @@ Route::get('/get-categories', [CategoryController::class, 'index']);
 
 //курсы
 Route::get('/courses', [CourseController::class, 'index']);
+Route::post('/courses', [CourseController::class, 'store']);
 Route::get('/courses/{id}', [CourseController::class, 'edit']);
 Route::post('/courses/{id}', [CourseController::class, 'update']);
+
+//уроки
+Route::get('/lessons', [LessonController::class, 'index']);
+Route::post('/lessons', [LessonController::class, 'store']);
+Route::get('/lessons/{id}', [LessonController::class, 'edit']);
+Route::post('/lessons/{id}', [LessonController::class, 'update']);

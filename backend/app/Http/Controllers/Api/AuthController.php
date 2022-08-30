@@ -89,13 +89,17 @@ class AuthController extends Controller
     {
         $data = $request->only('email', 'password');
         $user = $this->userService->getUserByEmail($data['email']);
-
-        if (!$user || ! Auth::attempt($data)) {
+        // $user = $this->userService->create($request);
+        return $this->successResponse(["fff" => Auth::user()]);
+       
+        
+        if (!$user || !Auth::attempt($data)) {
             return $this->errorResponse('Неверный логин или пароль', 401);
         }
 
         $token = $user->createToken('auth_token', $user->permissions)->plainTextToken;
         $resource = new Item($user, new UserTransformer());
+        // return $this->successResponse(["fff" => $resource]);
 
         $data = array(
             'access_token' => $token,

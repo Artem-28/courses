@@ -15,4 +15,25 @@ class CourseService
     {
         return Course::where('id', $id)->first();
     }
+
+    //сщздать новый курс
+    public function addNew($data)
+    {
+      $lesson = Course::create([
+        'title' => $data['title'],
+        'description' => $data['description'],
+        'order' => $data['order']
+      ]);
+      
+      return $lesson;
+    }
+
+    public function updateById($id, $data)
+    {
+        return Course::where('id', $id)->first()->update([
+          'title' => $data->title,
+          'description' => $data->description,
+          'order' => $data->order
+        ]);
+    }
 }
