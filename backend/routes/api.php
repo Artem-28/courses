@@ -36,10 +36,11 @@ Route::resource('attachment', \App\Http\Controllers\Api\AttachmentController::cl
 Route::get('/get-categories', [CategoryController::class, 'index']);
 
 //курсы
-Route::get('/courses', [CourseController::class, 'index']);
-Route::post('/courses', [CourseController::class, 'store']);
+Route::post('/courses/add-lessons', [CourseController::class, 'addLessons']);
 Route::get('/courses/{id}', [CourseController::class, 'edit']);
 Route::post('/courses/{id}', [CourseController::class, 'update']);
+Route::get('/courses', [CourseController::class, 'index']);
+Route::post('/courses', [CourseController::class, 'store']);
 
 //уроки
 Route::get('/lessons', [LessonController::class, 'index']);

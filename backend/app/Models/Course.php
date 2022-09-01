@@ -14,4 +14,9 @@ class Course extends Model
     'description',
     'order'
   ];
+
+  public function lessons()
+  {
+      return $this->belongsToMany(Lesson::class);
+  }
 }

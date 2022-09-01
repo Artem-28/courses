@@ -16,13 +16,16 @@ class LessonService
     return Lesson::where('id', $id)->first();
   }
 
-  public function addNew($data)
+  public function addNew($data, $account_id)
   {
-    $lesson = Lesson::create([
-      'title' => $data['title'],
-      'description' => $data['description'],
-      'order' => $data['order']
-    ]);
+    $lesson = new Lesson;
+      
+    $lesson->title = $data->title;
+    $lesson->description = $data->description;
+    $lesson->order = $data->order;
+    $lesson->account_id = $account_id;
+
+    $lesson->save();
     
     return $lesson;
   }

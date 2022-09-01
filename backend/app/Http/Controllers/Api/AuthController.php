@@ -90,7 +90,7 @@ class AuthController extends Controller
         $data = $request->only('email', 'password');
         $user = $this->userService->getUserByEmail($data['email']);
         // $user = $this->userService->create($request);
-        return $this->successResponse(["fff" => Auth::user()]);
+        // return $this->successResponse(["fff" => Auth::user()]);
        
         
         if (!$user || !Auth::attempt($data)) {

@@ -14,11 +14,12 @@ class CourseController extends Controller
   public function __construct(
     CourseService $courseService,
   ) {
-    // $this->middleware(['auth:sanctum']);
+    $this->middleware(['auth:sanctum']);
     $this->courseService = $courseService;
   }
 
   /**
+   * Get all courses
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
@@ -29,17 +30,9 @@ class CourseController extends Controller
     return $this->successResponse($courses);
   }
 
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    //
-  }
 
   /**
+   * Add new course
    * Store a newly created resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
@@ -48,7 +41,9 @@ class CourseController extends Controller
   public function store(Request $request)
   {
     try {
-      $course = $this->courseService->addNew($request);
+      $account = auth()->user()->account;
+      $course = $this->courseService->addNew($request, $account->id);
+
       return $this->successResponse($course);
     } catch (\Exception $exception) {
       $message = $exception->getMessage();
@@ -56,17 +51,9 @@ class CourseController extends Controller
     }
   }
 
-  /**
-   * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function show($id)
-  {
-  }
 
   /**
+   * Ger course by id
    * Show the form for editing the specified resource.
    *
    * @param  int  $id
@@ -79,6 +66,7 @@ class CourseController extends Controller
   }
 
   /**
+   * Edit course by id
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
@@ -98,13 +86,20 @@ class CourseController extends Controller
   }
 
   /**
-   * Remove the specified resource from storage.
+   * Add lessons to course.
    *
    * @param  int  $id
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function addLessons(Request $request)
   {
-    //
+    try {
+      $course = $this->courseService->addLessons($request);
+
+      return $this->successResponse($course);
+    } catch (\Exception $exception) {
+      $message = $exception->getMessage();
+      return $this->errorResponse($message);
+    }
   }
 }

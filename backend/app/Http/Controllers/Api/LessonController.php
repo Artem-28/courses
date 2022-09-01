@@ -49,7 +49,8 @@ class LessonController extends Controller
   public function store(Request $request)
   {
     try {
-      $lesson = $this->lessonService->addNew($request);
+      $account = auth()->user()->account;
+      $lesson = $this->lessonService->addNew($request, $account->id);
       return $this->successResponse($lesson);
     } catch (\Exception $exception) {
       $message = $exception->getMessage();
